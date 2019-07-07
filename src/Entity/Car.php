@@ -4,18 +4,18 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity
  * @ApiResource(
- *     collectionOperations={"post"},
- *     itemOperations={}
+ *     collectionOperations={"post", "get"},
+ *     itemOperations={"get"}
  * )
  */
 class Car
 {
-    private const MAX_MILEAGE = 4;
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -25,6 +25,7 @@ class Car
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(min=0, max=4)
      */
     private $mileage;
 
@@ -60,9 +61,6 @@ class Car
      */
     public function setMileage(int $mileage): self
     {
-        if ($mileage > self::MAX_MILEAGE) {
-            throw new \Exception('invalid mileage');
-        }
         $this->mileage = $mileage;
 
         return $this;
@@ -134,5 +132,29 @@ class Car
     public function getPriceDay7(): int
     {
         return $this->priceDay7;
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @param $payload
+     *
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context, $payload): void
+    {
+        if ($this->getPriceDay7() > $this->getPriceDay3()) {
+            $context->buildViolation('price day 7 must be inferior to price day 3')
+                ->atPath('priceDay7')
+                ->addViolation();
+
+            return;
+        }
+        if ($this->getPriceDay3() > $this->getPriceDay1()) {
+            $context->buildViolation('price day 3 must be inferior to price day 1')
+                ->atPath('priceDay3')
+                ->addViolation();
+
+            return;
+        }
     }
 }
