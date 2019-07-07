@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity
@@ -22,11 +24,13 @@ class CarUnavailability
 
     /**
      * @ORM\ManyToOne(targetEntity="Car")
+     * @Assert\NotNull
      */
     private $car;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\GreaterThan("now")
      */
     private $startDate;
 
@@ -98,5 +102,20 @@ class CarUnavailability
     public function getEndDate(): \DateTime
     {
         return $this->endDate;
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @param $payload
+     *
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context, $payload): void
+    {
+        if ($this->getEndDate() < $this->getStartDate()) {
+            $context->buildViolation('end date must be superior to start date')
+                ->atPath('endDate')
+                ->addViolation();
+        }
     }
 }
