@@ -1,5 +1,5 @@
 #!/bin/bash
-docker-composer run --rm php composer install
+docker-compose   run --rm php composer install
 docker-compose run --rm php bin/console doctrine:database:create
 docker-compose run --rm php bin/console doc:mig:mig
 docker-compose run php bin/console server:run

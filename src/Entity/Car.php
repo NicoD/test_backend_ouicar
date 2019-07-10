@@ -101,9 +101,9 @@ class Car
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getExactMileage(): int
+    public function getExactMileage(): ?int
     {
         return $this->exactMileage;
     }
