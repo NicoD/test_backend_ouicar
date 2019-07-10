@@ -11,7 +11,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ORM\Entity
  * @ApiResource(
  *     collectionOperations={"post", "get"},
- *     itemOperations={"get"}
+ *     itemOperations={
+ *      "get"
+ *   }
  * )
  */
 class Car
