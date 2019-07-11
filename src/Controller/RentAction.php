@@ -87,10 +87,11 @@ class RentAction
                 $rent = new Rent(uniqid(), $car, $price);
             }
             $lock->release();
-        }
-
-        if ($rent) {
-            return $rent;
+            
+            
+            if ($rent) {
+                return $rent;
+            }
         }
 
         throw new CarNotAvailableException('car not available');
